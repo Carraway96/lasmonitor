@@ -1,0 +1,55 @@
+/* Minimal, clean UI */
+:root{
+  --bg:#f6f7fb;
+  --card:#fff;
+  --text:#111;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --primary:#111827;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.container{max-width:1100px;margin-inline:auto;padding:16px}
+.topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+.brand{font-weight:800;font-size:18px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.center{text-align:center}
+.row{display:flex;gap:8px;align-items:center}
+.row.between{justify-content:space-between}
+.stack{display:grid;gap:16px}
+.mt{margin-top:8px}
+.mt-lg{margin-top:32px}
+.right{justify-self:end}
+.tight{margin:0 0 4px 0}
+.tabs .tab{border:1px solid var(--border);background:#fff;border-radius:999px;padding:6px 12px}
+.tabs .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.panel{}
+.hidden{display:none}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.grid-2{display:grid;gap:16px;grid-template-columns:1fr; }
+.grid-3-2{display:grid;gap:16px;grid-template-columns:1fr; }
+.grid-4{display:grid;gap:12px;grid-template-columns:repeat(4,minmax(0,1fr));}
+.grid-2 .card, .grid-3-2 .card{height:100%}
+.col-2{grid-column:span 2}
+.col-4{grid-column:span 4}
+.wrap{flex-wrap:wrap}
+.scroll-x{overflow:auto}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th,.table td{padding:8px;border-top:1px solid var(--border);white-space:nowrap}
+input,select,button,label.file-btn{padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff}
+button{cursor:pointer;background:var(--primary);color:#fff;border-color:var(--primary)}
+button:disabled{opacity:.6;cursor:not-allowed}
+label{display:grid;gap:6px;font-size:12px;color:var(--muted)}
+.list{list-style:none;margin:0;padding:0}
+.list li{padding:8px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.list li:first-child{border-top:0}
+.selectable li button{background:none;border:none;padding:0;color:#2563eb;cursor:pointer}
+.file-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;border-style:dashed}
+.help{font-size:12px;color:var(--muted)}
+/* responsive */
+@media (min-width: 900px){
+  .grid-2{grid-template-columns:2fr 1fr}
+  .grid-3-2{grid-template-columns:1.2fr 2fr}
+}

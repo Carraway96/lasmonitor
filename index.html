@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LäsMonitor – Åk 7–9 (GitHub Pages)</title>
+  <meta name="description" content="Mät och följ upp elevers läsning: WPM, förståelse, Lexile, LIX, DLS. Allt lokalt i webbläsaren.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lightweight default styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize@2/modern-normalize.min.css">
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="container row between center">
+    <div class="brand">LäsMonitor <span class="muted">MVP</span></div>
+    <nav class="tabs" role="tablist" aria-label="Huvudflikar">
+      <button class="tab active" data-tab="dashboard">Översikt</button>
+      <button class="tab" data-tab="students">Elever</button>
+      <button class="tab" data-tab="materials">Texter</button>
+      <button class="tab" data-tab="analytics">Analys</button>
+      <button class="tab" data-tab="settings">Inställningar</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container stack">
+  <!-- DASHBOARD -->
+  <section class="panel" id="view-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Klassens utveckling (NRS)</h2>
+        <canvas id="chart-cohort" height="220"></canvas>
+        <p class="help">NRS = Normaliserat läsindex (0–100) utifrån WPM, förståelse och nivå (Lexile/LIX/DLS).</p>
+      </div>
+      <div class="card">
+        <h2>Snabbstatus</h2>
+        <ul id="status-list" class="list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUDENTS -->
+  <section class="panel hidden" id="view-students" role="tabpanel" aria-labelledby="tab-students">
+    <div class="grid-3-2">
+      <div class="card">
+        <h2>Elever</h2>
+        <div class="row gap">
+          <input id="new-student-name" placeholder="Namn" />
+          <select id="new-student-grade">
+            <option value="7">Åk 7</option>
+            <option value="8">Åk 8</option>
+            <option value="9">Åk 9</option>
+          </select>
+          <button id="btn-add-student">Lägg till</button>
+        </div>
+        <ul id="student-list" class="list selectable"></ul>
+      </div>
+
+      <div class="stack">
+        <div class="card" id="student-header">
+          <h3 id="student-title" class="tight">Välj en elev</h3>
+          <div id="student-sub" class="muted">Ingen elev vald.</div>
+          <div class="mt">
+            <canvas id="chart-student" height="200"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Lägg till mätning</h2>
+          <div class="grid-4">
+            <label>Datum<input type="date" id="a-date"></label>
+            <label>Text<select id="a-material"><option value="">(valfri)</option></select></label>
+            <label>WPM<input type="number" id="a-wpm" inputmode="numeric" placeholder="t.ex. 165"></label>
+            <label>Förståelse %<input type="number" id="a-comp" inputmode="numeric" placeholder="0–100"></label>
+            <label>Lexile<input type="number" id="a-lex" inputmode="numeric" placeholder="t.ex. 750"></label>
+            <label>LIX<input type="number" id="a-lix" inputmode="numeric" placeholder="t.ex. 35"></label>
+            <label>DLS stanine<input type="number" id="a-dls-stan" inputmode="numeric" placeholder="1–9"></label>
+            <label>DLS percentil<input type="number" id="a-dls-pct" inputmode="numeric" placeholder="0–100"></label>
+            <label class="col-4">Anteckningar<input id="a-notes" placeholder="kort notis"></label>
+            <div class="right col-4"><button id="btn-add-assessment">Lägg till mätning</button></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Elevens mätningar</h2>
+          <div class="scroll-x">
+            <table class="table" id="assessment-table">
+              <thead><tr>
+                <th>Datum</th><th>WPM</th><th>Först%</th><th>Lexile</th><th>LIX</th><th>DLS stan</th><th>DLS pct</th><th>NRS</th><th></th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATERIALS -->
+  <section class="panel hidden" id="view-materials" role="tabpanel" aria-labelledby="tab-materials">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Lägg till text</h2>
+        <div class="grid-2">
+          <label class="col-2">Titel<input id="m-title" placeholder="Titel"></label>
+          <label>Lexile<input type="number" id="m-lex" inputmode="numeric" placeholder="L"></label>
+          <label>LIX<input type="number" id="m-lix" inputmode="numeric" placeholder="LIX"></label>
+          <label>Ord<input type="number" id="m-words" inputmode="numeric" placeholder="antal ord"></label>
+          <div class="right col-2"><button id="btn-add-material">Lägg till</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Mina texter</h2>
+        <ul class="list" id="material-list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALYTICS -->
+  <section class="panel hidden" id="view-analytics" role="tabpanel" aria-labelledby="tab-analytics">
+    <div class="card">
+      <h2>Senaste NRS per elev</h2>
+      <canvas id="chart-latest" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h2>Auto-tips</h2>
+      <ul class="list" id="tips-list"></ul>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="panel hidden" id="view-settings" role="tabpanel" aria-labelledby="tab-settings">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Normalisering & Mål</h2>
+        <div class="grid-2">
+          <div>
+            <label>WPM intervall</label>
+            <div class="row gap">
+              <input type="number" id="s-wpm-min"><input type="number" id="s-wpm-max">
+            </div>
+          </div>
+          <div>
+            <label>Förståelse %</label>
+            <div class="row gap">
+              <input type="number" id="s-comp-min"><input type="number" id="s-comp-max">
+            </div>
+          </div>
+          <div>
+            <label>Lexile intervall</label>
+            <div class="row gap">
+              <input type="number" id="s-lex-min"><input type="number" id="s-lex-max">
+            </div>
+          </div>
+          <div>
+            <label>LIX intervall</label>
+            <div class="row gap">
+              <input type="number" id="s-lix-min"><input type="number" id="s-lix-max">
+            </div>
+          </div>
+          <div>
+            <label>Mål Åk 7</label>
+            <div class="row gap">
+              <input type="number" id="s-t7-wpm" placeholder="WPM">
+              <input type="number" id="s-t7-comp" placeholder="Först%">
+            </div>
+          </div>
+          <div>
+            <label>Mål Åk 8</label>
+            <div class="row gap">
+              <input type="number" id="s-t8-wpm">
+              <input type="number" id="s-t8-comp">
+            </div>
+          </div>
+          <div>
+            <label>Mål Åk 9</label>
+            <div class="row gap">
+              <input type="number" id="s-t9-wpm">
+              <input type="number" id="s-t9-comp">
+            </div>
+          </div>
+          <div>
+            <label>Vikter (NRS)</label>
+            <div class="row gap">
+              <input type="number" id="s-w-wpm" step="0.05" placeholder="WPM">
+              <input type="number" id="s-w-comp" step="0.05" placeholder="Förståelse">
+              <input type="number" id="s-w-level" step="0.05" placeholder="Nivå">
+            </div>
+          </div>
+        </div>
+        <p class="help">Obs: DLS-resultat lagras som siffror (stanine/percentil). Själva provet lagras inte.</p>
+      </div>
+      <div class="card">
+        <h2>Backup & OneDrive</h2>
+        <div class="row gap wrap">
+          <button id="btn-export">Ladda ner JSON</button>
+          <label class="file-btn">Importera JSON<input type="file" id="file-import" accept="application/json" hidden></label>
+        </div>
+        <div class="row gap wrap mt">
+          <button id="btn-open-file">Öppna från fil…</button>
+          <button id="btn-save-file">Spara till fil…</button>
+        </div>
+        <p class="help">Tips: Välj en OneDrive-mapp när du sparar, så synkas filen i molnet. Kräver en modern Chromium-webbläsare.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="container muted small center mt-lg">
+  <p>Alla data sparas lokalt i din webbläsare eller i dina egna filer. Ingen server används.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
